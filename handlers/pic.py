@@ -5,7 +5,7 @@ pic_router = Router()
 
 @pic_router.message(Command(commands=['pic']))
 async def pic_handler(message):
-    image = types.FSInputFile(r'/Users/User/Desktop/python_geeks/3_month/HomeWork1/images/img.png')
+    image = types.FSInputFile(r'C:\Users\User\PycharmProjects\Restaurant_Telegram_bot\images\img.png')
     await message.answer_photo(image)
 
 
