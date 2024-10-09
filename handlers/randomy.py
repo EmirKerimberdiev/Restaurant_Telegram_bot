@@ -1,17 +1,12 @@
-from aiogram import Router
+from aiogram import Router, types
 from aiogram.filters.command import Command
-from aiogram.types import Message
 from random import choice
-import logging
 
-randomaizer_router = Router()
+random_router = Router()
 
-@randomaizer_router.message(Command(commands=['random']))
+
+@random_router.message(Command(commands=['random']))
 async def random_handler(message):
-
-    await message.answer("Hello this random message")
-
-    logging.info("Обработчик /random вызван")
 
     def draniki_recipe():
         return """
@@ -136,21 +131,29 @@ async def random_handler(message):
         6. Подавайте мясо с овощами на лапше, украсьте зеленью.
         """
 
-
     foods = ["Драники", "Панкейки", "Торт три шоколада", "Фрикасе", "Жаровня", "Лагман"]
     random_food = choice(foods)
 
     if random_food == "Драники":
+        await message.answer_photo(photo=types.FSInputFile(r'C:\Users\User\PycharmProjects\Restaurant_Telegram_bot\images\Draniki.jpg'))
         await message.answer(draniki_recipe())
     elif random_food == "Панкейки":
+        await message.answer_photo(photo=types.FSInputFile(r'C:\Users\User\PycharmProjects\Restaurant_Telegram_bot\images\Pankeky.jpg'))
         await message.answer(pancakes_recipe())
     elif random_food == "Торт три шоколада":
+        await message.answer_photo(photo=types.FSInputFile(r'C:\Users\User\PycharmProjects\Restaurant_Telegram_bot\images\Tort_three_chocolates.jpg'))
         await message.answer(tort_three_chocolates_recipe())
     elif random_food == "Фрикасе":
+        await message.answer_photo(photo=types.FSInputFile(r'C:\Users\User\PycharmProjects\Restaurant_Telegram_bot\images\Frikase.jpg'))
         await message.answer(frikase_recipe())
     elif random_food == "Жаровня":
+        await message.answer_photo(photo=types.FSInputFile(r'C:\Users\User\PycharmProjects\Restaurant_Telegram_bot\images\Zharovnya.jpg'))
         await message.answer(zharovnya_recipe())
     elif random_food == "Лагман":
+        await message.answer_photo(photo=types.FSInputFile(r'C:\Users\User\PycharmProjects\Restaurant_Telegram_bot\images\Lagman.jpg'))
         await message.answer(lagman_recipe())
+
     else:
         await message.answer("Неизвестное блюдо")
+
+
