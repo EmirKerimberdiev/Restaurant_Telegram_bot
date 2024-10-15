@@ -6,6 +6,7 @@ from handlers.pic import pic_router
 from handlers.my_info import myinfo_router
 from handlers.other import other
 from handlers.randomy import random_router
+from handlers.review_dialog import review_router
 from bot_config import bot, dp
 
 
@@ -14,6 +15,7 @@ async def main():
     dp.include_router(pic_router)
     dp.include_router(random_router)
     dp.include_router(myinfo_router)
+    dp.include_router(review_router)
 
     dp.include_router(other)
 
