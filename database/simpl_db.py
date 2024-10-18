@@ -1,7 +1,7 @@
 import sqlite3
 
 
-# connection = sqlite3.connect("db.sqlite")
+# connection = sqlite3.connect("db.system.data.sqlite")
 class Database:
     def __init__(self, path):
         self.path = path
@@ -11,16 +11,21 @@ class Database:
             connection.execute("""
                 CREATE TABLE IF NOT EXISTS survey_results (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
                     phone_number INTEGER,
                     visit_date INTEGER,
                     food_rating TEXT,
                     cleanliness_rating TEXT, 
                     extra_comments TEXT 
+                    tg_id INTEGER
                 )
             """)
 
             connection.commit()
 
 
-database = Database("db.sqlite")
-database.create_table()
+
+def execute(self, query: str, params: tuple = None):
+    with sqlite3.connect(self.path) as connection:
+        connection.execute(query, params)
+        connection.commit()
