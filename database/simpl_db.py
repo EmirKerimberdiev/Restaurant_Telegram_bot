@@ -1,31 +1,28 @@
 import sqlite3
 
 
-# connection = sqlite3.connect("db.system.data.sqlite")
 class Database:
-    def __init__(self, path):
+    def __init__(self, path: str):
         self.path = path
 
     def create_table(self):
         with sqlite3.connect(self.path) as connection:
-            connection.execute("""
+            cursor = connection.cursor()
+            cursor.execute("""
                 CREATE TABLE IF NOT EXISTS survey_results (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
-                    phone_number INTEGER,
-                    visit_date INTEGER,
+                    phone_number TEXT,  
+                    visit_date TEXT,    
                     food_rating TEXT,
-                    cleanliness_rating TEXT, 
-                    extra_comments TEXT 
+                    cleanliness_rating TEXT,
+                    review_extra_comments TEXT,
                     tg_id INTEGER
                 )
             """)
-
             connection.commit()
 
-
-
-def execute(self, query: str, params: tuple = None):
-    with sqlite3.connect(self.path) as connection:
-        connection.execute(query, params)
-        connection.commit()
+    def execute(self, query: str, params: tuple = ()):
+        with sqlite3.connect(self.path) as connection:
+            connection.execute(query, params)
+            connection.commit()

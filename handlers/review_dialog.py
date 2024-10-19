@@ -4,12 +4,11 @@ from aiogram import Router, F, types
 from aiogram.filters import Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
-from bot_config import Database
+from bot_config import database
 
 review_router = Router()
 list_of_clients = []
 list_tg_ids = []
-
 
 
 class RestourantReview(StatesGroup):
@@ -25,7 +24,6 @@ class RestourantReview(StatesGroup):
 async def review_handler(callback: types.CallbackQuery, state: FSMContext):
     if callback.from_user.id in list_tg_ids:
         await callback.message.answer("Вы уже проходили опрос!")
-        await callback.answer()
         return
     else:
         list_tg_ids.append(callback.from_user.id)
@@ -86,21 +84,38 @@ async def review_food_rating(message: types.Message, state: FSMContext):
 
 
 @review_router.message(RestourantReview.cleanliness_rating)
-async def review_cleanliness_rating(message: types.Message, state: FSMContext):
+async def cleanliness_rating(message: types.Message, state: FSMContext):
     await state.update_data(cleanliness_rating=message.text)
     await state.set_state(RestourantReview.extra_comments)
     await message.answer("Дополнительный комментарий: здесь вы можете написать всё, что угодно.")
 
 
 @review_router.message(RestourantReview.extra_comments)
-async def review_extra_comments(message: types.Message, state: FSMContext):
-    await state.update_data(extra_comments=message.text)
+async def extra_comments(message: types.Message, state: FSMContext):
+    await state.update_data(review_extra_comments=message.text)
 
-    # Сохраняем данные
     data = await state.get_data()
     list_of_clients.append(data)
     print(list_of_clients)
     print(list_tg_ids)
+    tg_id = message.from_user.id
 
-    await state.clear()
-    await message.answer("Спасибо за пройденный опрос!", reply_markup=types.ReplyKeyboardRemove())
+    database.execute(
+        query=("\n"
+               "INSERT INTO survey_results (name, phone_number, visit_date, food_rating, cleanliness_rating, "
+               "review_extra_comments, tg_id)\n"
+               "            VALUES (?, ?, ?, ?, ?, ?, ?)\n"
+               "        "),
+        params=(
+            data['name'],
+            data['phone_number'],
+            data['visit_date'],
+            data['food_rating'],
+            data['cleanliness_rating'],
+            data['review_extra_comments'],
+            tg_id
+        )
+    )
+
+    await state.clear(),
+    await message.answer("Спасибо за пройденный опрос!")

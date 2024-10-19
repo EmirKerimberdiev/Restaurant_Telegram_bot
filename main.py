@@ -7,13 +7,13 @@ from handlers.pic import pic_router
 from handlers.my_info import myinfo_router
 from handlers.other import other
 from handlers.review_dialog import review_router
-from bot_config import bot, dp
+from bot_config import bot, dp, database
 from aiogram import Bot
-from database.simpl_db import Database
 
 
-async def on_startup(bot: Bot):
-    await Database.create_table()
+async def on_startup():
+    print("База данных созданнна")
+    database.create_table()
 
 
 async def main():
@@ -24,6 +24,8 @@ async def main():
     dp.include_router(review_router)
 
     dp.include_router(other)
+
+    dp.startup.register(on_startup)
 
     await dp.start_polling(bot)
 
