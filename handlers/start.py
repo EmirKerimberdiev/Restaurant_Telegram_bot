@@ -1,7 +1,5 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
-from aiogram.fsm.state import State, StatesGroup
-from aiogram.fsm.context import FSMContext
 
 start_router = Router()
 list_of_clients = []
@@ -30,6 +28,9 @@ async def start_handler(message: types.Message):
             ],
             [
                 types.InlineKeyboardButton(text="Оставить отзыв", callback_data="review")
+            ],
+            [
+                types.InlineKeyboardButton(text="Показать списак блюд", callback_data="menu")
             ]
         ]
     )
@@ -50,4 +51,11 @@ async def about_us_handler(callback: types.CallbackQuery):
 async def vacancies_handler(callback: types.CallbackQuery):
     text = ("Возраст - от 18 до 25 лет.\nЗарплата - от 20000р до 30000р.\nДолжность - официант.\n"
             "Обязанности - обслуживание клиентов.\nТелефон - +996 000 000 000.")
+    await callback.message.answer(text)
+
+
+@start_router.callback_query(F.data == "menu")
+async def review_handler(callback: types.CallbackQuery):
+    file = open('file_for_food.txt', 'r')
+    text = file.read()
     await callback.message.answer(text)
