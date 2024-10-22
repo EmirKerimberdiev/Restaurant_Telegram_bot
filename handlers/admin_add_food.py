@@ -71,11 +71,9 @@ async def proces_s_category(message: types.Message, state: FSMContext):
                          reply_markup=kb)
 
 
-kb = types.ReplyKeyboardRemove()
-
-
 @admin_Food_router.message(FoodForm.confirm, F.text == "Да")
 async def process_confirm(message: types.Message, state: FSMContext):
+    kb = types.ReplyKeyboardRemove()
     data = await state.get_data()
     added_food = f"\nНазвание блюда: {data["name_of_Food"]}\nЦена: {data['price']}\nВ какой стране был создано: {data['from_countre']}\nКатегория: {data['category']}, \n"
     file = open('file_for_food.txt', 'a')

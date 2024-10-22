@@ -42,6 +42,10 @@ async def review_name(message: types.Message, state: FSMContext):
 
 @review_router.message(RestourantReview.phone_number)
 async def review_phone_number(message: types.Message, state: FSMContext):
+    num = message.text
+    if not num.isdigit():
+        await message.answer("Вводите только цифры")
+        return
     await state.update_data(phone_number=message.text)
     await state.set_state(RestourantReview.visit_date)
     await message.answer("Дата посещения нашего заведения (День/Месяц/Год)")
@@ -67,8 +71,13 @@ async def review_visit_date(message: types.Message, state: FSMContext):
 
 @review_router.message(RestourantReview.food_rating)
 async def review_food_rating(message: types.Message, state: FSMContext):
+    rating = message.text
+    if rating not in ["★", "★ ★", "★ ★ ★", "★ ★ ★ ★", "★ ★ ★ ★ ★"]:
+        await message.answer("Выберите один из пяти звёзд")
+        return
     await state.update_data(food_rating=message.text)
     await state.set_state(RestourantReview.cleanliness_rating)
+
 
     kb = types.ReplyKeyboardMarkup(
         keyboard=[
@@ -85,6 +94,10 @@ async def review_food_rating(message: types.Message, state: FSMContext):
 
 @review_router.message(RestourantReview.cleanliness_rating)
 async def cleanliness_rating(message: types.Message, state: FSMContext):
+    rating = message.text
+    if rating not in ["★", "★ ★", "★ ★ ★", "★ ★ ★ ★", "★ ★ ★ ★ ★"]:
+        await message.answer("Выберите один из пяти звёзд")
+        return
     await state.update_data(cleanliness_rating=message.text)
     await state.set_state(RestourantReview.extra_comments)
     await message.answer("Дополнительный комментарий: здесь вы можете написать всё, что угодно.")
@@ -102,7 +115,7 @@ async def extra_comments(message: types.Message, state: FSMContext):
 
     database.execute(
         query=("\n"
-               "INSERT INTO survey_results (name, phone_number, visit_date, food_rating, cleanliness_rating, "
+               "INSERT INTO database_for_data (name, phone_number, visit_date, food_rating, cleanliness_rating, "
                "review_extra_comments, tg_id)\n"
                "            VALUES (?, ?, ?, ?, ?, ?, ?)\n"
                "        "),

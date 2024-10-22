@@ -9,7 +9,7 @@ class Database:
         with sqlite3.connect(self.path) as connection:
             cursor = connection.cursor()
             cursor.execute("""
-                CREATE TABLE IF NOT EXISTS survey_results (
+                CREATE TABLE IF NOT EXISTS database_for_data  (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT,
                     phone_number TEXT,  
