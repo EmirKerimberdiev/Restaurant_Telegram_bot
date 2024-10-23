@@ -20,6 +20,17 @@ class Database:
                     tg_id INTEGER
                 )
             """)
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS dishes  (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name_of_Food TEXT,
+                    price INTEGER,  
+                    from_countre TEXT,    
+                    category TEXT
+                )
+            """)
+
             connection.commit()
 
     def execute(self, query: str, params: tuple = ()):

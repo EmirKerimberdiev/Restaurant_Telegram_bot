@@ -3,6 +3,8 @@ from aiogram.filters import Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 
+from bot_config import database
+
 
 class FoodForm(StatesGroup):
     name_of_Food = State()
@@ -73,12 +75,25 @@ async def proces_s_category(message: types.Message, state: FSMContext):
 
 @admin_Food_router.message(FoodForm.confirm, F.text == "Да")
 async def process_confirm(message: types.Message, state: FSMContext):
-    kb = types.ReplyKeyboardRemove()
     data = await state.get_data()
-    added_food = f"\nНазвание блюда: {data["name_of_Food"]}\nЦена: {data['price']}\nВ какой стране был создано: {data['from_countre']}\nКатегория: {data['category']}, \n"
-    file = open('file_for_food.txt', 'a')
-    file.write(added_food)
-    file.close()
+    database.execute(
+        query=("""
+            INSERT INTO dishes (name_of_Food, price, from_countre, category)
+            VALUES (?, ?, ?, ?)
+        """),
+        params=(
+            data['name_of_Food'],
+            data['price'],
+            data['from_countre'],
+            data['category'],
+        )
+    )
 
     await state.clear()
     await message.answer("Данные были сохранены!")
+
+
+@admin_Food_router.message(FoodForm.confirm, F.text == "Нет")
+async def process_not_confirmed(message: types.Message, state: FSMContext):
+    await state.set_state(FoodForm.name_of_Food)
+    await message.answer("Как называется ваше блюдо или напиток:")

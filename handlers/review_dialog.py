@@ -1,7 +1,4 @@
-import sqlite3
-
 from aiogram import Router, F, types
-from aiogram.filters import Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from bot_config import database
