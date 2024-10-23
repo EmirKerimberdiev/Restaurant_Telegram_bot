@@ -19,11 +19,11 @@ class RestourantReview(StatesGroup):
 
 @review_router.callback_query(F.data == "review")
 async def review_handler(callback: types.CallbackQuery, state: FSMContext):
-    if callback.from_user.id in list_tg_ids:
-        await callback.message.answer("Вы уже проходили опрос!")
-        return
-    else:
-        list_tg_ids.append(callback.from_user.id)
+    # if callback.from_user.id in list_tg_ids:
+    #     await callback.message.answer("Вы уже проходили опрос!")
+    #     return
+    # else:
+    #     list_tg_ids.append(callback.from_user.id)
 
     await state.set_state(RestourantReview.name)
     await callback.message.answer("Как вас зовут?")
@@ -69,10 +69,18 @@ async def review_visit_date(message: types.Message, state: FSMContext):
 @review_router.message(RestourantReview.food_rating)
 async def review_food_rating(message: types.Message, state: FSMContext):
     rating = message.text
-    if rating not in ["★", "★ ★", "★ ★ ★", "★ ★ ★ ★", "★ ★ ★ ★ ★"]:
+    star_to_number = {
+        "★": 1,
+        "★ ★": 2,
+        "★ ★ ★": 3,
+        "★ ★ ★ ★": 4,
+        "★ ★ ★ ★ ★": 5
+    }
+    if rating not in star_to_number:
         await message.answer("Выберите один из пяти звёзд")
         return
-    await state.update_data(food_rating=message.text)
+
+    await state.update_data(cleanliness_rating=star_to_number[rating])
     await state.set_state(RestourantReview.cleanliness_rating)
 
 
@@ -92,10 +100,18 @@ async def review_food_rating(message: types.Message, state: FSMContext):
 @review_router.message(RestourantReview.cleanliness_rating)
 async def cleanliness_rating(message: types.Message, state: FSMContext):
     rating = message.text
-    if rating not in ["★", "★ ★", "★ ★ ★", "★ ★ ★ ★", "★ ★ ★ ★ ★"]:
+    star_to_number = {
+        "★": 1,
+        "★ ★": 2,
+        "★ ★ ★": 3,
+        "★ ★ ★ ★": 4,
+        "★ ★ ★ ★ ★": 5
+    }
+    if rating not in star_to_number:
         await message.answer("Выберите один из пяти звёзд")
         return
-    await state.update_data(cleanliness_rating=message.text)
+
+    await state.update_data(cleanliness_rating=star_to_number[rating])
     await state.set_state(RestourantReview.extra_comments)
     await message.answer("Дополнительный комментарий: здесь вы можете написать всё, что угодно.")
 

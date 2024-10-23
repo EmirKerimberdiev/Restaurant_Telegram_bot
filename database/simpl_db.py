@@ -14,8 +14,8 @@ class Database:
                     name TEXT,
                     phone_number TEXT,  
                     visit_date TEXT,    
-                    food_rating TEXT,
-                    cleanliness_rating TEXT,
+                    food_rating INTEGER,
+                    cleanliness_rating INTEGER,
                     review_extra_comments TEXT,
                     tg_id INTEGER
                 )
@@ -37,3 +37,11 @@ class Database:
         with sqlite3.connect(self.path) as connection:
             connection.execute(query, params)
             connection.commit()
+
+    def fetch(self, query: str, params: tuple = None):
+        with sqlite3.connect(self.path) as conn:
+            result = conn.execute(query, params)
+            result.row_factory = sqlite3.Row
+
+            data = result.fetchall()
+            return [dict(row) for row in data]

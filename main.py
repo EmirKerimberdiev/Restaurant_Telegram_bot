@@ -8,6 +8,7 @@ from handlers.my_info import myinfo_router
 from handlers.admin_add_food import admin_Food_router
 from handlers.other import other
 from handlers.review_dialog import review_router
+from handlers.dishes import catalog_router
 from bot_config import bot, dp, database
 from aiogram import Bot
 
@@ -24,6 +25,7 @@ async def main():
     dp.include_router(myinfo_router)
     dp.include_router(review_router)
     dp.include_router(admin_Food_router)
+    dp.include_router(catalog_router)
 
     dp.include_router(other)
 
