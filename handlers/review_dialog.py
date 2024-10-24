@@ -80,7 +80,7 @@ async def review_food_rating(message: types.Message, state: FSMContext):
         await message.answer("Выберите один из пяти звёзд")
         return
 
-    await state.update_data(cleanliness_rating=star_to_number[rating])
+    await state.update_data(food_rating=star_to_number[rating])
     await state.set_state(RestourantReview.cleanliness_rating)
 
 

@@ -1,6 +1,5 @@
 import sqlite3
 
-
 class Database:
     def __init__(self, path: str):
         self.path = path
@@ -38,10 +37,10 @@ class Database:
             connection.execute(query, params)
             connection.commit()
 
-    def fetch(self, query: str, params: tuple = None):
+    def fetch(self, query: str, params: tuple = ()):
         with sqlite3.connect(self.path) as conn:
-            result = conn.execute(query, params)
-            result.row_factory = sqlite3.Row
-
-            data = result.fetchall()
+            conn.row_factory = sqlite3.Row  # Устанавливаем row_factory до выполнения запроса
+            cursor = conn.cursor()
+            cursor.execute(query, params)
+            data = cursor.fetchall()
             return [dict(row) for row in data]
