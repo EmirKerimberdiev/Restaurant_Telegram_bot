@@ -7,6 +7,15 @@ class Database:
     def create_table(self):
         with sqlite3.connect(self.path) as connection:
             cursor = connection.cursor()
+
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS users_id  (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER
+                )
+            """)
+
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS database_for_data  (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,6 +28,7 @@ class Database:
                     tg_id INTEGER
                 )
             """)
+
 
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS dishes  (
@@ -39,7 +49,7 @@ class Database:
 
     def fetch(self, query: str, params: tuple = ()):
         with sqlite3.connect(self.path) as conn:
-            conn.row_factory = sqlite3.Row  # Устанавливаем row_factory до выполнения запроса
+            conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
             cursor.execute(query, params)
             data = cursor.fetchall()

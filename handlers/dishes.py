@@ -5,6 +5,7 @@ from bot_config import database
 
 catalog_router = Router()
 
+
 @catalog_router.message(Command("catalog"))
 async def show_all_dishes(message: types.Message):
     kb = types.ReplyKeyboardMarkup(
@@ -18,20 +19,21 @@ async def show_all_dishes(message: types.Message):
                 types.KeyboardButton(text="Холодные напитки"),
                 types.KeyboardButton(text="Гарниры")
             ]
+
         ],
         resize_keyboard=True,
         input_field_placeholder="Выберите категорию"
     )
     await message.answer("Выберите категорию блюда", reply_markup=kb)
 
-categories = ("Супы", "Вторые", "Горячие напитки", "Холодные напитки", "Гарниры")
+categoris = ("Супы", "Вторые", "Горячие напитки", "Холодные напитки", "Гарниры")
 
-@catalog_router.message(F.text.in_(categories))
+
+@catalog_router.message(F.text.in_(categoris))
 async def show_dishes_by_category(message: types.Message):
     category = message.text
     print(category)
     dishes = database.fetch("SELECT * FROM dishes WHERE category = ?", (category,))
-
     if dishes:
         await message.answer("Вот все блюда в категории " + category + ":\n")
         for dish in dishes:

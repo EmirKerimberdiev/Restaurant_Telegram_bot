@@ -19,11 +19,12 @@ class RestourantReview(StatesGroup):
 
 @review_router.callback_query(F.data == "review")
 async def review_handler(callback: types.CallbackQuery, state: FSMContext):
-    # if callback.from_user.id in list_tg_ids:
-    #     await callback.message.answer("Вы уже проходили опрос!")
-    #     return
-    # else:
-    #     list_tg_ids.append(callback.from_user.id)
+    id = callback.from_user.id
+    user_ids = database.fetch("SELECT user_id FROM users_id")
+
+    if any(user_id["user_id"] == id for user_id in user_ids):
+        await callback.message.answer("Вы уже проходили опрос!")
+        return
 
     await state.set_state(RestourantReview.name)
     await callback.message.answer("Как вас зовут?")

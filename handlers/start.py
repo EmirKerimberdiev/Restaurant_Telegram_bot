@@ -1,14 +1,19 @@
 from aiogram import Router, types, F
 from aiogram.filters import Command
+from bot_config import database
 
 start_router = Router()
-list_of_clients = []
 list_tg_ids = []
 
 
 @start_router.message(Command(commands=['start']))
 async def start_handler(message: types.Message):
     name = message.from_user.first_name
+
+    unique_user_ids = database.fetch("SELECT DISTINCT user_id FROM users_id")
+    summ = len(unique_user_ids)
+
+    await message.answer(f"Вы уже {summ} зарегистрированный в боте")
 
     keyboard = types.InlineKeyboardMarkup(
         inline_keyboard=[
@@ -32,9 +37,11 @@ async def start_handler(message: types.Message):
         ]
     )
 
-    await message.answer(f"Добро пожаловать, {name}, в бот Adriano! Этот бот был создан для вашего удобства. "
-                         f"Вы можете узнать о нашем ресторане, оставить отзыв, а также ознакомиться с нашими вакансиями.",
-                         reply_markup=keyboard)
+    await message.answer(
+        f"Добро пожаловать, {name}, в бот Adriano! Этот бот был создан для вашего удобства. "
+        f"Вы можете узнать о нашем ресторане, оставить отзыв, а также ознакомиться с нашими вакансиями.",
+        reply_markup=keyboard
+    )
 
 
 @start_router.callback_query(F.data == "about_us")
