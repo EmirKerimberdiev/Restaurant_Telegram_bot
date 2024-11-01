@@ -8,7 +8,6 @@ class Database:
         with sqlite3.connect(self.path) as connection:
             cursor = connection.cursor()
 
-
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS users_id  (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,6 +28,12 @@ class Database:
                 )
             """)
 
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS category (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT
+                )
+            """)
 
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS dishes  (
@@ -36,7 +41,8 @@ class Database:
                     name_of_Food TEXT,
                     price INTEGER,  
                     from_countre TEXT,    
-                    category TEXT
+                    category_id INTEGER,
+                    FOREIGN KEY (category_id) REFERENCES category(id)
                 )
             """)
 

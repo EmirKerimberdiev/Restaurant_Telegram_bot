@@ -27,7 +27,7 @@ async def main():
     dp.include_router(admin_Food_router)
     dp.include_router(catalog_router)
 
-    dp.include_router(other)
+    # dp.include_router(other)
 
     dp.startup.register(on_startup)
 

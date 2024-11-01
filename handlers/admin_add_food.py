@@ -13,10 +13,29 @@ class FoodForm(StatesGroup):
     category = State()
     confirm = State()
 
+class AdminAddFood(StatesGroup):
+    name = State()
+
 
 admin = 1625576858
 admin_Food_router = Router()
 admin_Food_router.message.filter(F.from_user.id == admin)
+
+
+@admin_Food_router.message(Command("newcategory"))
+async def start_Food_category_form(message: types.Message, state: FSMContext):
+    await state.set_state(AdminAddFood.name)
+    await message.answer("Введите название новой категории блюд или напиток:")
+
+@admin_Food_router.message(AdminAddFood.name)
+async def process_name_of_Food(message: types.Message, state: FSMContext):
+    name_of_Food = message.text
+    database.execute(
+        query="""INSERT INTO category (name) VALUES (?)""",
+        params=(name_of_Food,)
+    )
+    await  state.clear()
+    await message.answer("Категория была добавлена!")
 
 
 @admin_Food_router.message(Command("newFood"))
@@ -43,17 +62,16 @@ async def process_price(message: types.Message, state: FSMContext):
 async def process_from_countre(message: types.Message, state: FSMContext):
     await state.update_data(from_countre=message.text)
     await state.set_state(FoodForm.category)
+    catedory_list = database.fetch(
+        query="""SELECT name_of_Food FROM category"""
+    )
     kb = types.ReplyKeyboardMarkup(
-        keyboard=[[
-            types.KeyboardButton(text="Супы"),
-            types.KeyboardButton(text="Вторые"),
-            types.KeyboardButton(text="Горячие напитки"),
-            types.KeyboardButton(text="Холодные напитки"),
-            types.KeyboardButton(text="Гарниры")
-        ]],
+        keyboard=[
+            [types.KeyboardButton(text=categor['name']) for categor in catedory_list]
+        ],
         resize_keyboard=True
     )
-    await message.answer("Выберите категорию этого блюда или напитка:", reply_markup=kb)
+    await message.answer("Выберите категорию:", reply_markup=kb)
 
 
 @admin_Food_router.message(FoodForm.category)
